@@ -1,0 +1,270 @@
+@name loka.utillib
+@inputs 
+@outputs 
+@persist SoundGenVar
+@persist [AdvSoundVolumeTable,AdvSoundPitchTable]:table
+
+#[
+    generic lib containing helpful functions, made by lokachop
+]#
+
+function number decomposeVecAbs(Vector:vector)
+{
+    return abs(Vector:x())+abs(Vector:y())+abs(Vector:z())
+    
+}
+
+function number decomposeVec(Vector:vector)
+{
+    return Vector:x()+Vector:y()+Vector:z()
+    
+}
+
+function vector reflect(HitAngle:vector,HitNormal:vector) {
+    return -(HitAngle:rotateAroundAxis(HitNormal,180))
+}
+
+function number ezSound(Sample:string,Volume,Pitch)
+{
+    SoundGenVar++
+    if(SoundGenVar>50) {SoundGenVar=1}
+    AdvSoundPitchTable[SoundGenVar,number]=Pitch
+    AdvSoundVolumeTable[SoundGenVar,number]=Volume
+    soundPlay(SoundGenVar,1000000,Sample)
+    soundVolume(SoundGenVar,Volume)
+    soundPitch(SoundGenVar,Pitch)
+    return SoundGenVar
+}
+
+function number entity:ezSound(Sample:string,Volume,Pitch)
+{
+    SoundGenVar++
+    if(SoundGenVar>50) {SoundGenVar=1}
+    AdvSoundPitchTable[SoundGenVar,number]=Pitch
+    AdvSoundVolumeTable[SoundGenVar,number]=Volume
+    This:soundPlay(SoundGenVar,1000000,Sample)
+    soundVolume(SoundGenVar,Volume)
+    soundPitch(SoundGenVar,Pitch)
+    return SoundGenVar
+}
+
+function number ezSound(Sample:string)
+{
+    SoundGenVar++
+    if(SoundGenVar>50) {SoundGenVar=1}
+    AdvSoundPitchTable[SoundGenVar,number]=100
+    AdvSoundVolumeTable[SoundGenVar,number]=1
+    soundPlay(SoundGenVar,1000000,Sample)
+    return SoundGenVar
+}
+
+function number entity:ezSound(Sample:string)
+{
+    SoundGenVar++
+    if(SoundGenVar>50) {SoundGenVar=1}
+    AdvSoundPitchTable[SoundGenVar,number]=100
+    AdvSoundVolumeTable[SoundGenVar,number]=1
+    This:soundPlay(SoundGenVar,1000000,Sample)
+    return SoundGenVar
+}
+
+function void number:ezSoundPitch(Pitch)
+{
+    soundPitch(This,Pitch)
+    AdvSoundPitchTable[This,number]=Pitch
+}
+function void number:ezSoundPitchGradient(PitchTarget,Time)
+{
+    soundPitch(This,PitchTarget,Time)
+    AdvSoundPitchTable[This,number]=PitchTarget
+}
+
+
+function void number:ezSoundStop()
+{
+    soundStop(This)
+}
+
+function void number:ezSoundSetSample(Sample:string)
+{
+    soundPlay(This,10000000,Sample)
+    soundPitch(This,AdvSoundPitchTable[This,number])
+    soundVolume(This,AdvSoundVolumeTable[This,number])
+}
+
+function void number:ezSoundVolume(Volume)
+{
+    soundVolume(This,Volume)
+    AdvSoundVolumeTable[This,number]=Volume
+}
+
+function void number:ezSoundVolumeGradient(VolumeTarget,Time)
+{
+    soundVolume(This,VolumeTarget,Time)
+    AdvSoundVolumeTable[This,number]=VolumeTarget
+}
+
+function void wirelink:egpScaleOutline(ID,Scale)
+{
+    This:egpFidelity(ID,64)
+    This:egpSize(ID,Scale)
+}
+
+
+
+
+
+
+
+#fancy text functions
+function number wirelink:egpBackShadowText(ID,String:string,Pos:vector2,ColourFG:vector4,ColourBG:vector4,Offset:vector2)
+{
+    This:egpText(ID,String,Pos+Offset)
+    This:egpColor(ID,ColourBG)
+    This:egpText(ID+1,String,Pos)
+    This:egpColor(ID+1,ColourFG)
+    return ID+1
+}
+
+
+function number wirelink:egpBackShadowText(ID,String:string,Pos:vector2,ColourFG:vector,ColourBG:vector,Offset:vector2)
+{
+    This:egpText(ID,String,Pos+Offset)
+    This:egpColor(ID,ColourBG)
+    This:egpText(ID+1,String,Pos)
+    This:egpColor(ID+1,ColourFG)
+    return ID+1
+}
+
+
+function number wirelink:egpBackShadowText(ID,String:string,Pos:vector2,ColourFG:vector,Offset:vector2)
+{
+    This:egpText(ID,String,Pos+Offset)
+    This:egpColor(ID,vec(0))
+    This:egpText(ID+1,String,Pos)
+    This:egpColor(ID+1,ColourFG)
+    return ID+1
+}
+
+
+function number wirelink:egpBackShadowText(ID,String:string,Pos:vector2,ColourFG:vector)
+{
+    This:egpText(ID,String,Pos+vec2(2,2))
+    This:egpColor(ID,vec(0))
+    This:egpText(ID+1,String,Pos)
+    This:egpColor(ID+1,ColourFG)
+    return ID+1
+}
+
+function number wirelink:egpBackShadowText(ID,String:string,Pos:vector2)
+{
+    This:egpText(ID,String,Pos+vec2(2,2))
+    This:egpColor(ID,vec(0))
+    This:egpText(ID+1,String,Pos)
+    This:egpColor(ID+1,vec(255))
+    return ID+1
+}
+
+
+function void wirelink:egpAdvTextAlign(ID,VertA,HorizA)
+{
+    This:egpAlign(ID,VertA,HorizA)
+    This:egpAlign(ID-1,VertA,HorizA)
+}
+
+function void wirelink:egpAdvTextScale(ID,Size)
+{
+    This:egpSize(ID,Size)
+    This:egpSize(ID-1,Size)
+}
+
+function void wirelink:egpAdvTextRotate(ID,Angle)
+{
+    This:egpAngle(ID,Angle)
+    This:egpAngle(ID-1,Angle)
+    
+}
+
+
+
+
+
+function number wirelink:advTouching(Obj1,Obj2)
+{
+    local Obj1Y1 = This:egpPos(Obj1):y()-(This:egpSize(Obj1):y()/2)
+    local Obj1X1 = This:egpPos(Obj1):x()-(This:egpSize(Obj1):x()/2) #own fork of public touching function, kinda forgot src by now
+    local Obj1Y2 = This:egpPos(Obj1):y()+(This:egpSize(Obj1):y()/2)
+    local Obj1X2 = This:egpPos(Obj1):x()+(This:egpSize(Obj1):x()/2)
+    
+    local Obj2Y1 = This:egpPos(Obj2):y()-(This:egpSize(Obj2):y()/2)
+    local Obj2X1 = This:egpPos(Obj2):x()-(This:egpSize(Obj2):x()/2)
+    local Obj2Y2 = This:egpPos(Obj2):y()+(This:egpSize(Obj2):y()/2) #obj 2
+    local Obj2X2 = This:egpPos(Obj2):x()+(This:egpSize(Obj2):x()/2)
+    
+    
+    if(inrange(vec2(Obj2X1,Obj2Y1),vec2(Obj1X1,Obj1Y1),vec2(Obj1X2,Obj1Y2)))
+    {
+        return 1
+    }
+    elseif(inrange(vec2(Obj2X2,Obj2Y1),vec2(Obj1X1,Obj1Y1),vec2(Obj1X2,Obj1Y2)))
+    {
+        return 1
+    }
+    elseif(inrange(vec2(Obj2X1,Obj2Y2),vec2(Obj1X1,Obj1Y1),vec2(Obj1X2,Obj1Y2)))
+    {
+        return 1
+    }
+    elseif(inrange(vec2(Obj2X2,Obj2Y2),vec2(Obj1X1,Obj1Y1),vec2(Obj1X2,Obj1Y2)))
+    {
+        return 1
+    }
+    else
+    {
+        return 0
+    }
+}
+
+
+function number wirelink:simpleTouching(Obj1,Obj2)
+{
+        local Y1 = This:egpPos(Obj2):y()-(This:egpSize(Obj2):y()/2)
+        local X1 = This:egpPos(Obj2):x()-(This:egpSize(Obj2):x()/2)
+        local Y2 = This:egpPos(Obj2):y()+(This:egpSize(Obj2):y()/2) #public touching function, kinda forgot src by now
+        local X2 = This:egpPos(Obj2):x()+(This:egpSize(Obj2):x()/2) #here for retro compat
+        local Pos = This:egpPos(Obj1)
+
+        if (inrange(Pos,vec2(X1,Y1),vec2(X2,Y2)))
+        {
+            return 1
+        }
+        else
+        {
+            return 0
+        }
+}
+
+
+
+
+#[
+function number wirelink:egpGradientBox(ID,Pos:vector2,Size:vector2,Count,StartColour:vector,EndColour:vector)
+{
+    local GenExpression = GenGradient
+    while(GenGradient<Count)
+    {
+        This:egpBox(ID+GenGradient,vec2(Pos:x()/GenExpression,Pos:y()),vec2(Size:x()/GenExpression,Size:y()))
+        This:egpColor(ID+GenGradient,mix(StartColour,EndColour,GenGradient/Count))
+        GenGradient++
+    }
+    if(GenGradient>=Count)
+    {
+
+        return GenGradient
+        GenGradient=0
+    }
+    
+    
+    #scrapped temporarily, although hello if you stumble upon this on the code
+}
+]#
+
