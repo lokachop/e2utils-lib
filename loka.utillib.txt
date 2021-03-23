@@ -6,6 +6,7 @@
 
 #[
     generic lib containing helpful functions, made by lokachop
+    VERSION 1.0 PUBLIC RELEASE
 ]#
 
 function number decomposeVecAbs(Vector:vector)
