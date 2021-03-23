@@ -1,5 +1,9 @@
 # e2utils-lib
-simple #include e2 to add cool functions
-
+simple library with a bunch of helpful and cool functions for e2
+just add
+**#include "loka.utillib"**
+to your code to get all these functions
 
 Read the wiki [here](https://github.com/lokachop/e2utils-lib/wiki)
+
+coded by lokachop :)
