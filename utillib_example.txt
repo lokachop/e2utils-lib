@@ -1,0 +1,38 @@
+@name utillib example
+@inputs EGP:wirelink
+@outputs 
+@persist SoundInstance CurID DelayVar
+if(first()|dupefinished())
+{
+    EGP:egpClear()
+    runOnTick(1)
+    #include "loka.utillib"
+    EGP:egpBox(1,vec2(256,256),vec2(512,512))
+    EGP:egpColor(1,vec(50))
+    
+    EGP:egpCircleOutline(2,vec2(256,256),vec2(100,100))
+    EGP:egpScaleOutline(2,16)
+    EGP:egpColor(2,vec(25))
+    
+    CurID=EGP:egpBackShadowText(3,"loka.utillib example!",vec2(256,0),vec(0,255,0))
+    EGP:egpAdvTextScale(CurID,32)
+    EGP:egpAdvTextAlign(CurID,1,0)
+    
+    
+    EGP:egpBox(CurID+1,vec2(256,256),vec2(45,45))
+    EGP:egpBox(CurID+2,vec2(0),vec2(5))
+    EGP:egpColor(CurID+2,vec(255,0,0))
+}
+EGP:egpPos(CurID+2,EGP:egpCursor(owner()))
+if(EGP:advTouching(CurID+1,CurID+2)&owner():keyPressed("E")&DelayVar==0)
+{
+    SoundInstance=ezSound("music/hl2_song16.mp3",1,50)
+    SoundInstance:ezSoundPitchGradient(150,16)
+    timer("Reset",16000)
+    DelayVar=1
+}
+if(clk("Reset"))
+{
+    SoundInstance:ezSoundStop()
+    DelayVar=0
+}
